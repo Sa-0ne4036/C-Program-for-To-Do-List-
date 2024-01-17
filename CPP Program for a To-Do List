@@ -1,0 +1,111 @@
+#This is the program for a simple console-based to-do list manager that allows users to add, view, and delete tasks
+#Task Input: Allow users to input tasks they want to add to the list.
+#Add Task: Implement a function to add tasks to the list.
+#View Tasks: Display the list of tasks with their status (completed or pending).
+#Mark Task as Completed: Allow users to mark tasks as completed.
+#Remove Task: Provide an option to remove tasks from the list.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Task {
+    string description;
+    bool completed;
+
+    Task(const string& desc) : description(desc), completed(false) {}
+};
+
+class TodoList {
+private:
+    vector<Task> tasks;
+
+public:
+    void addTask(const string& description) {
+        tasks.emplace_back(description);
+        cout << "Task added: " << description << endl;
+    }
+
+    void viewTasks() const {
+        if (tasks.empty()) {
+            cout << "No tasks in the to-do list. " << endl;
+        } else {
+            cout << "To-Do List: " << endl;
+            for (size_t i = 0; i < tasks.size(); ++i) {
+                cout << i + 1 << ". [" << (tasks[i].completed ? "X" : " ") << "] " << tasks[i].description << endl;
+            }
+        }
+    }
+
+    void markAsCompleted(size_t taskIndex) {
+        if (taskIndex < tasks.size()) {
+            tasks[taskIndex].completed = true;
+            cout << "Task marked as completed: " << tasks[taskIndex].description << endl;
+        } else {
+            cout << "Invalid task index. " << endl;
+        }
+    }
+
+    void removeTask(size_t taskIndex) {
+        if (taskIndex < tasks.size()) {
+            cout << "Task removed: " << tasks[taskIndex].description << endl;
+            tasks.erase(tasks.begin() + taskIndex);
+        } else {
+            cout << "Invalid task index. " << endl;
+        }
+    }
+};
+
+int main() {
+    TodoList todoList;
+
+    char choice;
+    do {
+        cout << endl << "===== To-Do List Manager =====" << endl;
+        cout << "1. Add Task " << endl;
+        cout << "2. View Tasks " << endl;
+        cout << "3. Mark Task as Completed " << endl;
+        cout << "4. Remove Task " << endl;
+        cout << "5. Exit " << endl;
+        cout << "Enter your choice: " << endl;
+        cin >> choice;
+
+        switch (choice) {
+            case '1': {
+                string taskDescription;
+                cout << "Enter task description: ";
+                cin.ignore();  // Ignore any newline character left in the buffer
+                getline(cin, taskDescription);
+                todoList.addTask(taskDescription);
+                break;
+            }
+            case '2':
+                todoList.viewTasks();
+                break;
+            case '3': {
+                size_t taskIndex;
+                cout << "Enter the task index to mark as completed: ";
+                cin >> taskIndex;
+                todoList.markAsCompleted(taskIndex - 1);  // Adjust index to 0-based
+                break;
+            }
+            case '4': {
+                size_t taskIndex;
+                cout << "Enter the task index to remove: ";
+                cin >> taskIndex;
+                todoList.removeTask(taskIndex - 1);  // Adjust index to 0-based
+                break;
+            }
+            case '5':
+                cout << "Exiting the To-Do List Manager. " << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please enter a number between 1 and 5. " << endl;
+        }
+
+    } while (choice != '5');
+
+    return 0;
+}
